@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 import DragableItem from './DraggableItem'
 import styled from 'styled-components';
+import groups from './groups'
 
 const grid = 8;
 const getListStyle = (isDraggingOver, highlightback) => ({
@@ -24,19 +25,24 @@ const Content = styled.div`
        
 export default class DroppableItem extends Component{ 
   render(){
-    let {droppableId, items, relatedContent, relatedlistContent} = this.props;
+    let {droppableId, items, selectedId, relatedContent, relatedlistContent} = this.props;
+    let compare = '10';
+    if (relatedlistContent[0] !== undefined){
+      compare = relatedlistContent[0].replace('violinPlot', '')
+    } 
     return (
       <Droppable droppableId={droppableId} direction="horizental">
         {(provided, snapshot) => (
+          
           <div
             ref={provided.innerRef}
             style={getListStyle(
               snapshot.isDraggingOver,
-              (droppableId.includes('subdroppable')&&relatedlistContent.includes('violinPlot2'))||(droppableId.includes('maindroppable')&&relatedlistContent.includes('violinPlot1'))
+              compare == selectedId+1 ? true:false
               )}>
             {items.map((item, positionSelected) => (
               <React.Fragment key={item.id}>
-                <Content value={(droppableId.includes('subdroppable')&&relatedlistContent.includes('violinPlot2'))||(droppableId.includes('maindroppable')&&relatedlistContent.includes('violinPlot1'))}>
+                <Content value={compare == selectedId+1 ? true:false}>
                   <DragableItem 
                     item={item}
                     positionSelected={positionSelected} 

@@ -4,35 +4,24 @@ import DragDropContextItem from "./DragDropContextItem";
 // import '@atlaskit/css-reset';
 
 import groups from "./groups"
-
-let itemsArr1 = [];
-let relatedArr1 = [];
-let relatedlistArr1 = [];
-// Object.keys(groups).foreach((mainkey, position) => {
-  Object.keys(groups.violinPlot1).forEach((key, positionSelected) => {
-    itemsArr1[positionSelected] = [];
-    relatedArr1[positionSelected] = [];
-    relatedlistArr1[positionSelected] = [];
-    Object.keys(groups.violinPlot1[key]).forEach((subkey) => {
-      itemsArr1[positionSelected].push({ id: subkey, content: groups.violinPlot1[key][subkey].id});
-      relatedArr1[positionSelected].push({id: subkey, content: groups.violinPlot1[key][subkey].itemsRelated});
-      relatedlistArr1[positionSelected].push({id: subkey, content: groups.violinPlot1[key][subkey].getItemsRelated});
+let itemsArr = [];
+let relatedArr = [];
+let relatedlistArr = [];
+Object.keys(groups).forEach((mainkey, mainpositionSelected) => {
+  itemsArr[mainpositionSelected] = [];
+  relatedArr[mainpositionSelected] = [];
+  relatedlistArr[mainpositionSelected] = [];
+  Object.keys(groups[mainkey]).forEach((key, positionSelected) => {
+    itemsArr[mainpositionSelected][positionSelected] = [];
+    relatedArr[mainpositionSelected][positionSelected] = [];
+    relatedlistArr[mainpositionSelected][positionSelected] = [];
+    Object.keys(groups[mainkey][key]).forEach((subkey) => {
+      itemsArr[mainpositionSelected][positionSelected].push({ id: subkey, content: groups[mainkey][key][subkey].id});
+      relatedArr[mainpositionSelected][positionSelected].push({id: subkey, content: groups[mainkey][key][subkey].itemsRelated});
+      relatedlistArr[mainpositionSelected][positionSelected].push({id: subkey, content: groups[mainkey][key][subkey].getItemsRelated});
     });
   });
-// })
-let itemsArr2 = [];
-let relatedArr2 = [];
-let relatedlistArr2 = [];
-Object.keys(groups.violinPlot2).forEach((key, positionSelected) => {
-  itemsArr2[positionSelected] = [];
-  relatedArr2[positionSelected] = [];
-  relatedlistArr2[positionSelected] = [];
-  Object.keys(groups.violinPlot2[key]).forEach((subkey) => {
-    itemsArr2[positionSelected].push({ id: subkey, content: groups.violinPlot2[key][subkey].id});
-    relatedArr2[positionSelected].push({id: subkey, content: groups.violinPlot2[key][subkey].itemsRelated});
-    relatedlistArr2[positionSelected].push({id: subkey, content: groups.violinPlot2[key][subkey].getItemsRelated});
-  });
-});
+})
 
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
@@ -62,21 +51,12 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 
 class App extends Component {
   state = {
-    listGroup1: itemsArr1,
-    listGroup2: itemsArr2,
-    related1: relatedArr1,
-    related2: relatedArr2,
-    relatedlist1: relatedlistArr1,
-    relatedlist2: relatedlistArr2,
+    listGroup: itemsArr,
+    related: relatedArr,
+    relatedlist: relatedlistArr,
     relateObj: [],
     relatedlistObj: []
   };
-  id2List = {
-    maindroppable: "listGroup1",
-    subdroppable: "listGroup2"
-  };
-
-  getList = id => this.state[this.id2List[id]];
 
   onDragEnd = (result, positionSelected) => {
     this.setState({relateObj: [], relatedlistObj: []})
@@ -84,23 +64,17 @@ class App extends Component {
     if (!destination) {
       return;
     }
+    let sourceSelected = source.droppableId.replace("droppableId", '');
+    let destinationSelected = destination.droppableId.replace("droppableId", '');
     if (source.droppableId === destination.droppableId) {
-      let listGroup1 = [];
-      if (source.droppableId.includes("subdroppable")) {
-        listGroup1 = itemsArr2;
-      } else {
-        listGroup1 = itemsArr1;
-      }
-      listGroup1[positionSelected] = reorder(
-        listGroup1[positionSelected],
+      let listGroup = [];
+      listGroup[sourceSelected] = itemsArr[sourceSelected];      
+      listGroup[sourceSelected][positionSelected] = reorder(
+        listGroup[sourceSelected][positionSelected],
         source.index,
         destination.index
       );
-      let state = { listGroup1 };
-      if (source.droppableId.includes("subdroppable")) {
-        state = { listGroup2: listGroup1 };
-      }
-      this.setState(state);
+      this.setState(listGroup);
     }
     else {
         let sourceItem = [];
@@ -109,22 +83,12 @@ class App extends Component {
         let relateddestinationItem = [];
         let relatedlistsourceItem = [];
         let relatedlistdestinationItem = [];
-        if (source.droppableId.includes('subdroppable')){
-            sourceItem = this.state.listGroup2[positionSelected];
-            destinationItem = this.state.listGroup1[positionSelected];
-            relatedsourceItem = this.state.related2[positionSelected];
-            relateddestinationItem = this.state.related1[positionSelected];
-            relatedlistsourceItem = this.state.relatedlist2[positionSelected];
-            relatedlistdestinationItem = this.state.relatedlist1[positionSelected];
-        }
-        else {
-            sourceItem = this.state.listGroup1[positionSelected];
-            destinationItem = this.state.listGroup2[positionSelected];
-            relatedsourceItem = this.state.related1[positionSelected];
-            relateddestinationItem = this.state.related2[positionSelected];
-            relatedlistsourceItem = this.state.relatedlist1[positionSelected];
-            relatedlistdestinationItem = this.state.relatedlist2[positionSelected];
-        }
+        sourceItem = this.state.listGroup[sourceSelected][positionSelected];
+        destinationItem = this.state.listGroup[destinationSelected][positionSelected];
+        relatedsourceItem = this.state.related[sourceSelected][positionSelected];
+        relateddestinationItem = this.state.related[destinationSelected][positionSelected];
+        relatedlistsourceItem = this.state.relatedlist[sourceSelected][positionSelected];
+        relatedlistdestinationItem = this.state.relatedlist[destinationSelected][positionSelected];
       const result = move(
         sourceItem,
         destinationItem,
@@ -143,64 +107,46 @@ class App extends Component {
         source,
         destination
     )
-      let movedroppableId1 = `maindroppable${positionSelected}`;
-      let movedroppableId2 = `subdroppable${positionSelected}`;
-      this.state.listGroup1[positionSelected] = result[movedroppableId1];
-      this.state.listGroup2[positionSelected] = result[movedroppableId2];
-      this.state.related1[positionSelected] = relatedresult[movedroppableId1];
-      this.state.related2[positionSelected] = relatedresult[movedroppableId2];
-      this.state.relatedlist1[positionSelected] = relatedlistresult[movedroppableId1];
-      this.state.relatedlist2[positionSelected] = relatedlistresult[movedroppableId2];
+      let sourcedroppableId = `droppableId${sourceSelected}`;
+      let destinationdroppableId = `droppableId${destinationSelected}`;
+      this.state.listGroup[sourceSelected][positionSelected] = result[sourcedroppableId];
+      this.state.listGroup[destinationSelected][positionSelected] = result[destinationdroppableId];
+      this.state.related[sourceSelected][positionSelected] = relatedresult[sourcedroppableId];
+      this.state.related[destinationSelected][positionSelected] = relatedresult[destinationdroppableId];
+      this.state.relatedlist[sourceSelected][positionSelected] = relatedlistresult[sourcedroppableId];
+      this.state.relatedlist[destinationSelected][positionSelected] = relatedlistresult[destinationdroppableId];
       this.setState({
-        listGroup1: this.state.listGroup1,
-        listGroup2: this.state.listGroup2,
-        related1: this.state.related1,
-        related2: this.state.related2,
-        relatedlist1: this.state.relatedlist1,
-        relatedlist2: this.state.relatedlist2
+        listGroup: this.state.listGroup,
+        related: this.state.related,
+        relatedlist: this.state.relatedlist,
       });
     }
   };
 
   onDragStart = (result, positionSelected) => {
-      const {source} = result;
-      let relateObj = [];
-      let relatedlistObj = [];
-      console.log(result)
-      if (source.droppableId.includes('subdroppable')){
-        relateObj = this.state.related2[positionSelected].filter((item) => {
-          return item.id === result.draggableId
-        })
-        relatedlistObj = this.state.relatedlist2[positionSelected].filter((itemlist) => {
-          return itemlist.id === result.draggableId
-        })
-      }
-      else {
-        relateObj = this.state.related1[positionSelected].filter((item) => {
-          return item.id === result.draggableId
-        })
-        relatedlistObj = this.state.relatedlist1[positionSelected].filter((itemlist) => {
-          return itemlist.id === result.draggableId 
-        })
-      }
-      console.log('relateObj',relateObj)
-      console.log('relatedlistObj',relatedlistObj)
+    const {source} = result;
+    let sourceSelected = source.droppableId.replace("droppableId", '');
+    let relateObj = [];
+    let relatedlistObj = [];
+      relateObj = this.state.related[sourceSelected][positionSelected].filter((item) => {
+        return item.id === result.draggableId
+      })
+      relatedlistObj = this.state.relatedlist[sourceSelected][positionSelected].filter((itemlist) => {
+        return itemlist.id === result.draggableId
+      })
     this.setState({relateObj: relateObj[0].content, relatedlistObj:relatedlistObj[0].content});
   }
   render() {
-    const { listGroup1, listGroup2, relateObj, relatedlistObj } = this.state;
+    const { listGroup, relateObj, relatedlistObj } = this.state;
     return (
       <React.Fragment>
-        {itemsArr1.map((item, positionSelected) => {
+        {itemsArr[0].map((item, positionSelected) => {
           return (
             <DragDropContextItem
-              // key={item}
               onDragEnd={result => this.onDragEnd(result, positionSelected)}
               onDragStart = {result => this.onDragStart(result, positionSelected)}
-              droppableId1={`maindroppable${positionSelected}`}
-              items1={listGroup1[positionSelected]}
-              droppableId2={`subdroppable${positionSelected}`}
-              items2={listGroup2[positionSelected]}
+              items={listGroup}
+              positionSelected= {positionSelected}
               relatedContent = {relateObj}
               relatedlistContent = {relatedlistObj}
             />

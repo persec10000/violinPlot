@@ -14,23 +14,22 @@ const Container = styled.div`
 
 
 export default class App extends Component {
+  componentDidMount(){
+  }
   render() {
-    const { onDragEnd, onDragStart, droppableId1, droppableId2, items1, items2, relatedContent, relatedlistContent } = this.props;
+    const { onDragEnd, onDragStart, positionSelected, items, relatedContent, relatedlistContent } = this.props;
     return (
       <Container>
         <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
-          <DroppableItem 
-            droppableId={droppableId1} 
-            items={items1} 
-            relatedContent={relatedContent} 
-            relatedlistContent={relatedlistContent}
-          />
-          <DroppableItem 
-            droppableId={droppableId2} 
-            items={items2} 
-            relatedContent={relatedContent} 
-            relatedlistContent={relatedlistContent}
-          />
+          {items.map((item,selectedId) => 
+            <DroppableItem 
+              droppableId={`droppableId${selectedId}`}
+              selectedId={selectedId} 
+              items={item[positionSelected]} 
+              relatedContent={relatedContent} 
+              relatedlistContent={relatedlistContent}
+            />
+          )}
         </DragDropContext>
       </Container>
     );
