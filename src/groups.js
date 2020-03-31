@@ -4,17 +4,17 @@ const groups = {
       item0: {
         id: "item 0",
         itemsRelated: ["item 5", "first 9", "second 3"],
-        getItemsRelated: ['violinPlot2']
+        getItemsRelated: ['violinPlot2', 'violinPlot1']
       },
       item1: {
         id: "item 1",
         itemsRelated: ["item 4", "first 9", "first 5", "second 7", "second 8"],
-        getItemsRelated: ['violinPlot1']
+        getItemsRelated: ['violinPlot2', 'violinPlot3']
       },
       item2: {
         id: "item 2",
         itemsRelated: ["item 3", "first 1", "second 9"],
-        getItemsRelated: ['violinPlot3']
+        getItemsRelated: ['violinPlot1']
       },
       item3: {
         id: "item 3",

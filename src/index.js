@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import DragDropContextItem from "./DragDropContextItem";
+import './index.css'
 // import '@atlaskit/css-reset';
 
 import groups from "./groups"
@@ -57,7 +58,27 @@ class App extends Component {
     relateObj: [],
     relatedlistObj: []
   };
-
+  sendStructure = () => {
+    console.log('Hello world', this.state.listGroup)
+    // fetch(url, {
+    //   method: 'POST',
+    //   headers: {        
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     data: this.state.listGroup,
+    //   }),
+    // })
+    //   .then(response => {
+    //     return response.json();
+    //   })
+    //   .then(json => {
+    //     return json;
+    //   })
+    //   .catch((err)=>{
+    //     console.log("error", err)
+    //   })
+  }
   onDragEnd = (result, positionSelected) => {
     this.setState({relateObj: [], relatedlistObj: []})
     const { source, destination } = result;
@@ -138,6 +159,7 @@ class App extends Component {
   }
   render() {
     const { listGroup, relateObj, relatedlistObj } = this.state;
+    console.log("getItem======", relatedlistObj)
     return (
       <React.Fragment>
         {itemsArr[0].map((item, positionSelected) => {
@@ -152,6 +174,14 @@ class App extends Component {
             />
           );
         })}
+        <div className="buttons">
+          <div className="buttonItem" onClick={this.highLight}>
+            <span className='buttonText'>HighLight</span>
+          </div>
+          <div className="buttonItem" onClick={this.sendStructure}>
+            <span className='buttonText'>Send</span>
+          </div>
+        </div>
       </React.Fragment>
     );
   }
